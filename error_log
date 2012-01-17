@@ -1,0 +1,1 @@
+[17-Jan-2012 09:14:03] PHP Fatal error:  Allowed memory size of 67108864 bytes exhausted (tried to allocate 404169 bytes) in /home/brooklyn/public_html/includes/cache.inc on line 418
