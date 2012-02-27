@@ -24,7 +24,7 @@ img {
   margin-bottom: 10px;
 }
 /* Fonts */
-a, 
+a,
 a:link,
 a:visited {
   text-decoration: none;
@@ -38,7 +38,7 @@ a:visited {
 }
 a:focus,
 a:hover {
-  
+
   color: #0073ba;
   border-bottom: 0;
 }
@@ -47,7 +47,7 @@ a:hover {
   border: 0;
 }
 p, ul, ol, li, table {
-  
+
 }
 h1.site-name {
   font-family: UbuntuBold, Geneva, "Helvetica Nueue", Helvetica, Verdana, Arial, sans-serif;
@@ -66,7 +66,7 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0;
 }
 
-/* Header */ 
+/* Header */
 header.section-header {
   background: #EEE;
 }
@@ -112,10 +112,10 @@ footer.section-footer {
   display: block;
   text-align: center;
   background: #ffffff; /* Old browsers */
-  
+
   border-bottom: 0;
   font-family: UbuntuRegular, Geneva, "Helvetica Nueue", Helvetica, Verdana, Arial, sans-serif;
-  
+
   font-size: 1.5em; /* 15px */
   padding: 1em 0;
   color: #000;
@@ -204,7 +204,7 @@ h1#page-title,
 /* Trying to get a transform on the node link headers */
 
 article header h2.node-title {
-  font-size: 2.0em; /* 20px */
+  font-size: 1.5em; /* 20px */
   margin-bottom: 0;
   padding: 0;
 }
@@ -274,8 +274,8 @@ article .comment-inner,
   -moz-border-radius: 0 0 10px 10px;
   -o-border-radius: 0 0 10px 10px;
   border-radius: 0 0 10px 10px;
-  
-  
+
+
 }
 
 .comment-form > div {
@@ -325,7 +325,7 @@ section.block-menu .block-inner > div.content {
 }
 
 section.block-menu ul.menu {
-  
+
 }
 section.block-menu ul.menu li,
 section.block-menu ul.menu li.leaf {
@@ -340,7 +340,7 @@ section.block-menu ul.menu li a {
   padding: 0;
   border-bottom: 1px dotted #006caf;
   padding: 0.25em 1em;
-  
+
   background: #ffffff; /* Old browsers */
 }
 
@@ -358,7 +358,7 @@ section.block-menu ul.menu li a:hover,
 section.block-menu ul.menu li a.active {
   color: #FFF;
   padding-left: 2em;
-  background: #93c5e4; /* Old browsers */  
+  background: #93c5e4; /* Old browsers */
 }
 
 section.block-menu ul.menu li ul a:hover,
@@ -403,19 +403,19 @@ html.js input.form-autocomplete {
   margin: 0;
   outline: 0;
   vertical-align: middle;
-  
+
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   -o-box-sizing: border-box;
   box-sizing: border-box;
-  
+
   -moz-background-clip: padding;
   -webkit-background-clip: padding;
   -o-background-clip: padding;
   background-clip: padding-box;
-  
+
   background: #ffffff; /* Old browsers */
-  
+
 	-webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   -o-border-radius: 5px;
@@ -431,7 +431,7 @@ textarea {
 	border: solid 1px #E5E5E5;
 	font: normal 1.8em/150% Verdana, Tahoma, sans-serif;
 	width: 100%;
-  
+
   -webkit-border-radius: 5px 5px 0 0;
   -moz-border-radius: 5px 5px 0 0;
   -o-border-radius: 5px 5px 0 0;
@@ -445,7 +445,7 @@ input[type="submit"] {
 	cursor: pointer;
 	font: normal 1.4em/100% Verdana, Tahoma, sans-serif;
 	margin-right: 0.5em;
-	
+
 	background: #93c5e4; /* Old browsers */
   color: #FFF;
 }
@@ -553,7 +553,7 @@ table {
 }
 #search-block-form .container-inline {
   position: relative;
-  
+
 }
 #search-block-form .form-text {
   margin-bottom: 0;
@@ -567,18 +567,37 @@ table {
   text-indent: -9999em;
   width: 40px;
   background: #CCC url('../i/search.png') no-repeat center center;
-  
+
   -webkit-border-radius: 0 5px 5px 0;
   -moz-border-radius: 0 5px 5px 0;
   -o-border-radius: 0 5px 5px 0;
   border-radius: 0 5px 5px 0;
 }
 
+div.field-name-field-image .field-items {
+  float:left;
+  margin-right:30px;
+}
+div.field-name-field-image .field-items a {
+border-bottom:none;
+}
+div.field-name-field-image  .field-items img {
+margin-bottom:10px;
+  -moz-box-shadow: 5px 5px 5px #ccc;
+  -webkit-box-shadow: 5px 5px 5px #ccc;
+  -o-box-shadow: 5px 5px 5px #ccc;
+  box-shadow: 5px 5px 5px #ccc;
+
+}
+
+.field-name-field-image .field-items::after {
+content: ".";
+display: block;
+height: 0;
+clear: both;
+visibility: hidden;
+}
 
 
 
 /* Hidden Elements in Mobile */
-
-
-
-

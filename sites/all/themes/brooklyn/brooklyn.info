@@ -35,6 +35,15 @@ zones[postscript] = 'Postscript'
 css[global.css][name] = 'Your custom global styles'
 css[global.css][description] = 'This file holds all the globally active custom CSS of your theme.'
 css[global.css][options][weight] = '10'
+css[brooklyn-text.css][name] = 'Your custom global text styles'
+css[brooklyn-text.css][description] = 'This file holds all the globally active text CSS of your theme.'
+css[brooklyn-text.css][options][weight] = '10'
+
+fonts[google_fonts_api][] = "Nobile&subset=latin#bold"
+fonts[google_fonts_api][] = "Nobile&subset=latin#bolditalic"
+fonts[google_fonts_api][] = "Nobile&subset=latin#italic"
+fonts[google_fonts_api][] = "Nobile&subset=latin#regular"
+
 settings[alpha_grid] = 'alpha_default'
 settings[alpha_primary_alpha_default] = 'normal'
 settings[alpha_responsive] = '1'

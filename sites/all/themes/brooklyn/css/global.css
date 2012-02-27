@@ -1,1 +1,125 @@
 /* This file will hold the main styles for your website. */
+
+
+div.field-name-field-image .field-items {
+  float:left;
+  margin-right:30px;
+}
+div.field-name-field-image .field-items a {
+border-bottom:none;
+}
+div.field-name-field-image  .field-items img,
+#region-sidebar-first .block {
+margin-bottom:10px;
+  -moz-box-shadow: 5px 5px 5px #ccc;
+  -webkit-box-shadow: 5px 5px 5px #ccc;
+  -o-box-shadow: 5px 5px 5px #ccc;
+  box-shadow: 5px 5px 5px #ccc;
+
+}
+
+#region-sidebar-first .block {
+  border:1px dotted #ccc;
+  padding:10px;
+  margin-bottom:20px;
+}
+
+.field-name-field-image .field-items::after {
+content: ".";
+display: block;
+height: 0;
+clear: both;
+visibility: hidden;
+}
+
+div.user-picture,
+.view-members div.views-field-picture {
+  float:left;
+  margin-right:10px;
+}
+
+.views-field-field-taxonomy-image {
+  float:left;
+  margin-right:5px;
+}
+.view-bs-calendar.view-display-id-block_2 .views-field-field-date {
+  font-size:.8em;
+  color:#444;
+}
+
+
+.profile .field-name-field-user-fname, .profile .field-name-field-user-lname {
+  font-size:18px;
+  font-weight:700;
+  margin-bottom:10px;
+}
+
+.profile .field-name-field-user-fname {
+  float:left;
+  margin-right:.25em;
+}
+
+div.user-picture img {
+  margin-bottom:10px;
+  -moz-box-shadow: 5px 5px 5px #ccc;
+  -webkit-box-shadow: 5px 5px 5px #ccc;
+  -o-box-shadow: 5px 5px 5px #ccc;
+  box-shadow: 5px 5px 5px #ccc;
+}
+
+ul#megamenu-main-menu {
+  padding:.5em;
+}
+#megamenu-main-menu>li {
+  padding:0 .5em;
+}
+ section#section-content {
+  padding-top:20px;
+ }
+
+ #region-content .views-row,
+ #region-content article {
+  padding-bottom:10px;
+  margin-bottom:10px;
+  border-bottom: 1px dotted #ccc;
+ }
+
+ #region-branding {
+  min-height:100px;
+  padding-top:20px;
+ }
+
+ .sf-menu.sf-style-space li.active-trail.sf-depth-2 {
+  background-color:#333333;
+ }
+
+ .pane-user-login div.form-item {
+  float:left;
+  margin-right:10px;
+ }
+
+ #block-superfish-2 {
+  float:left;
+ }
+
+ .block-text-resize {
+  float:right;
+ }
+
+ .view-bs-calendar.view-display-id-block_2 .views-row {
+  padding-bottom:6px;
+  margin-bottom:10px;
+  border-bottom:1px dotted #ccc;
+}
+
+
+.view-display-id-block_2 .panel-2col .panel-col-first{
+  width:30px;
+}
+.view-display-id-block_2 .panel-2col .panel-col-last {
+width: 168px;
+}
+
+.panel-2col .panel-col-last .inside {
+margin: 0;
+}
