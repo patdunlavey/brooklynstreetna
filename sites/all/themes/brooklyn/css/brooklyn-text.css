@@ -2,6 +2,8 @@ body {
 /*  font: 12px/1.5 Verdana, Helvetica, Arial, sans-serif;
 */
 line-height:110%;
+font-size:12px;
+line-height:1.6em;
 }
 
 a:link, a:visited {
