@@ -1,0 +1,149 @@
+From 223d5d9645e23a1eb6db40cbb95b8a984322b220 Mon Sep 17 00:00:00 2001
+From: Roman Zimmermann <roman@more-onion.com>
+Date: Tue, 17 Jan 2012 19:14:41 +0100
+Subject: [PATCH] title and alt attributes for images
+
+---
+ includes/media.fields.inc |   50 ++++++++++++++++++++++++++++++++++++++++----
+ media.module              |   28 +++++++++---------------
+ 2 files changed, 56 insertions(+), 22 deletions(-)
+
+diff --git a/includes/media.fields.inc b/includes/media.fields.inc
+index c255a23..ab99c6c 100644
+--- a/includes/media.fields.inc
++++ b/includes/media.fields.inc
+@@ -152,7 +152,6 @@ function media_field_widget_form(&$form, &$form_state, $field, $instance, $langc
+ 
+   $element += array(
+     '#type' => 'media', // Would like to make this a fieldset, but throws some weird warning about element_children... not sure what it is about yet.
+-    '#collapsed' => TRUE,
+     '#default_value' => $current_value,
+     '#required' => $instance['required'],
+     '#media_options' => array(
+@@ -167,21 +166,62 @@ function media_field_widget_form(&$form, &$form_state, $field, $instance, $langc
+       ),
+     ),
+   );
+-
++  
++  $fields = array();
+   if ($field['type'] == 'file') {
+-    $element['display'] = array(
++    $fields['display'] = array(
+       '#type' => 'value',
+       '#value' => 1,
+     );
++    
++    // Add the description field if enabled.
++    if (!empty($field_settings['description_field'])) {
++      $fields['description'] = array(
++        '#type' => 'textfield',
++        '#title' => t('Description'),
++        '#value' => isset($current_value['description']) ? $current_value['description'] : '',
++        '#type' => variable_get('file_description_type', 'textfield'),
++        '#maxlength' => variable_get('file_description_length', 128),
++        '#description' => t('The description may be used as the label of the link to the file.'),
++      );
++    }
+   }
+ 
+   // Add image field specific validators.
+   if ($field['type'] == 'image') {
+     if ($field_settings['min_resolution'] || $field_settings['max_resolution']) {
+-      $element['#media_options']['global']['min_resolution'] = $field_settings['min_resolution'];
+-      $element['#media_options']['global']['max_resolution'] = $field_settings['max_resolution'];
++      $fields['media']['#media_options']['global']['min_resolution'] = $field_settings['min_resolution'];
++      $fields['media']['#media_options']['global']['max_resolution'] = $field_settings['max_resolution'];
+     }
++    // Add the additional alt and title fields.
++    $fields['alt'] = array(
++      '#title' => t('Alternate text'),
++      '#type' => 'textfield',
++      '#default_value' => isset($current_value['alt']) ? $current_value['alt'] : '',
++      '#description' => t('This text will be used by screen readers, search engines, or when the image cannot be loaded.'),
++      '#maxlength' => variable_get('image_alt_length', 80), // See http://www.gawds.org/show.php?contentid=28.
++      '#weight' => 1,
++      '#access' => $field_settings['alt_field'],
++    );
++    $fields['title'] = array(
++      '#type' => 'textfield',
++      '#title' => t('Title'),
++       '#default_value' => isset($current_value['title']) ? $current_value['title'] : '',
++       '#description' => t('The title is used as a tool tip when the user hovers the mouse over the image.'),
++      '#maxlength' => variable_get('image_title_length', 500),
++      '#weight' => 2,
++      '#access' => $field_settings['title_field'],
++    );
+   }
++  
++  $element += $fields;
++  
++  $form['submit'] = array(
++    '#type' => 'submit',
++    '#value' => t('Submit'),
++  );
++
++
+ 
+   return $element;
+ }
+diff --git a/media.module b/media.module
+index cea8446..ba41f2c 100644
+--- a/media.module
++++ b/media.module
+@@ -454,14 +454,6 @@ function media_form_field_ui_field_edit_form_alter(&$form, &$form_state) {
+   if ($form['#field']['type'] == 'file' && $form['instance']['widget']['type']['#value'] == 'media_generic') {
+     $form['field']['settings']['display_field']['#access'] = FALSE;
+     $form['field']['settings']['display_default']['#access'] = FALSE;
+-    $form['instance']['settings']['description_field']['#access'] = FALSE;
+-    $form['instance']['settings']['file_extensions']['#title'] = t('Allowed file extensions for uploaded files');
+-  }
+-
+-  // On image fields using the media widget we remove the alt/title fields
+-  if ($form['#field']['type'] == 'image' && $form['instance']['widget']['type']['#value'] == 'media_generic') {
+-    $form['instance']['settings']['alt_field']['#access'] = FALSE;
+-    $form['instance']['settings']['title_field']['#access'] = FALSE;
+     $form['instance']['settings']['file_extensions']['#title'] = t('Allowed file extensions for uploaded files');
+   }
+ }
+@@ -776,14 +768,6 @@ function media_element_process(&$element, &$form_state, $form) {
+   $file = file_load($fid);
+   $path = drupal_get_path('module', 'media');
+ 
+-  $element['title'] = array(
+-    '#type' => 'item',
+-    '#title' => $element['#title'],
+-    '#markup' => '',
+-    '#description' => $element['#description'],
+-    '#required' => $element['#required'],
+-  );
+-
+   //@TODO: This should be loaded from the JS in case of a failed form submission.
+   $markup = '';
+   if (!empty($file)) {
+@@ -847,11 +831,21 @@ function media_element_process(&$element, &$form_state, $form) {
+ 
+   module_load_include('inc', 'media', 'includes/media.browser');
+   media_attach_browser_js($element);
+-
++  
++  $element += array( 
++    '#pre_render' => array('media_pre_render_fieldset', 'form_pre_render_fieldset'),
++  );
++  $element['#theme_wrappers'] = array('fieldset');
++  if (!$element['#value']) unset($element['#value']);
+   return $element;
+   // @todo: make this work for file and image fields
+ }
+ 
++function media_pre_render_fieldset(&$v) {
++  unset($v['#value']);
++  return $v;
++}
++
+ /**
+  * Validate media form elements. The file type is validated during the upload process, but this is
+  * necessary in order to respect the #required property.
+-- 
+1.7.3.4
+
