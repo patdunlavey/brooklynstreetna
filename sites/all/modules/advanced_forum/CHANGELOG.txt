@@ -1,6 +1,49 @@
 
 ****************************** DRUPAL 7 - 2.x BRANCH ********************************
 
+March 01, 2012
+-----------------
+by troky: Fixed undefined variable introduced in previous patch.
+
+February 29, 2012
+-----------------
+Issue #1351392 by aidanlis: Added drupal_alter to advanced_forum_process_forum.
+
+February 11, 2012
+-----------------
+by troky: Code cleanup in advanced_forum_allowed_node_types()
+
+February 10, 2012
+-----------------
+Issue #1433566 by roderik: Reduce number of SQL queries on main forum page.
+
+February 06, 2012
+-----------------
+Issue #1429936 by GANYANCI: Removed leftover function dpm().
+
+January 22, 2012
+----------------
+Issue #1395164 by troky: Fixed hot icons don't show problem.
+
+January 21, 2012
+----------------
+Issue #1396428 by troky: Fixed strict warning in advanced_forum_preprocess_comment.inc.
+Issue #1309104 by mcdruid: Fixed table header text alignment.
+Issue #1115950 by sahunt83: Changed Cloudless Day base theme to Naked.
+
+December 24, 2011
+-----------------
+Issue #1369468 by mcdruid: Minor CSS fix.
+
+December 13, 2011
+-----------------
+Issue #1369468 by troky: Fixed the same class name is being used for the title 'Topics' and for the total number of topics
+Issue #1367808 by troky: Fixed duplication of div IDs for forum posts and comments.
+
+December 05, 2011
+-----------------
+7.x-2.0rc1 release
+
 December 04, 2011
 -----------------
 Issue #1339882 by troky: Fixed undefined index in in advanced_forum_links_alter().

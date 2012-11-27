@@ -10,9 +10,9 @@ configure = admin/structure/forum
 
 files[] = tests/forum_access.test
 
-; Information added by drupal.org packaging script on 2012-02-19
-version = "7.x-1.0-rc1"
+; Information added by drupal.org packaging script on 2012-09-19
+version = "7.x-1.2"
 core = "7.x"
 project = "forum_access"
-datestamp = "1329673547"
+datestamp = "1348083232"
 

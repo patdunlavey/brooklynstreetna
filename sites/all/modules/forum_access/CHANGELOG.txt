@@ -5,13 +5,44 @@ CHANGELOG for Forum Access for Drupal 7
 forum_access 7.x-1.x-dev:
 
 
+forum_access 7.x-1.2 (2012-09-15):
+  Bug fixed:
+    - #1775204: Avoid crashing the site if FA encounters CMA 1.x (when the upgrade instructions aren't being followed).
+
+
+forum_access 7.x-1.1 (2012-09-02):
+  Enhancements:
+    - Fix all Coder complaints (no functional changes).
+    - #1757616: Switch to 2.x branch of Chain Menu Access API module.
+    - Revised the README.txt file.
+    - Work around all false Coder Review positives (no functional change).
+  Bugs fixed:
+    - Increase timeout for the tests to ensure they go through on slow computers.
+    - Clean up the dependencies for testing (no functional change).
+    - #1768330: Remove the broken D5 Legacy Mode which never worked for D7.
+    - #1701504: Give moderators access to the administrative node properties and add tests.
+    - Remove the version requirement in the .info file to avoid breaking the testbot (#1768442).
+    - Avoid an E_STRICT warning (no functional change).
+    - Remove the unnecessary hook_requirements().
+    - #1706040: Avoid crashing in the presence of content_access.module.
+    - Fix forum_access_requirements() to always return an array().
+    - Replace $_GET['q'] with current_path(), for D8.
+
+
+forum_access 7.x-1.0 (2012-04-02):
+forum_access 7.x-1.0-rc2 (2012-03-16):
+  Bugs fixed:
+   - #1478822: Use user_roles() to allow translation of built-in roles and because it's the right way.
+   - Remove some left-over code from D6.
+   - Use node_load_multiple() for updating the permissions.
+   - #1321864 by David4514: Fix unnecessary suppression of non-standard fields on add/edit node form for moderators.
+
 forum_access 7.x-1.0-rc1 (2012-02-19):
   Bugs fixed:
-    - #1429220: Fix exending edit/delete own forum content permissions to comments and clarify information.
+    - #1429220: Fix extending edit/delete own forum content permissions to comments and clarify information.
     - Show proper mouse-over hints on the forum settings pages.
     - Fix the ForumAccessBaseTestCase.
     - Adjust POST to the Devel Settings page to Devel change.
-
 
 forum_access 7.x-1.0-beta2 (2012-01-05):
   Bugs fixed:

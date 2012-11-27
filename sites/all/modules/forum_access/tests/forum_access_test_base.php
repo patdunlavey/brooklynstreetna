@@ -45,7 +45,8 @@ class ForumAccessBaseTestCase extends ForumTestCase {
     if (!isset($this->time)) {
       $this->time = time();
     }
-    $this->timeLimit = 1000;
+    $this->timeLimit = 2345;
+    $this->pass("timeLimit set to $this->timeLimit.");
     parent::setUp();
     if (!module_exists('forum_access')) {
       module_enable(array('acl', 'chain_menu_access', 'forum_access'), FALSE);
@@ -152,7 +153,7 @@ class ForumAccessBaseTestCase extends ForumTestCase {
     // Create our roles.
     $this->admin_rid = 3;
     $this->webmaster_rid = (int) $this->drupalCreateRole(array('administer blocks', 'administer forums', 'administer nodes', 'administer comments', 'administer menu', 'administer taxonomy', 'create forum content', 'access content overview', 'access administration pages', 'view revisions', 'revert revisions', 'delete revisions'), '11 webmaster');
-    $this->forum_admin_rid = (int) $this->drupalCreateRole(array('administer forums', 'create forum content', 'edit any forum content', 'delete any forum content', /*'access content overview', 'access administration pages',*/), '12 forum admin');
+    $this->forum_admin_rid = (int) $this->drupalCreateRole(array('administer forums', 'create forum content', 'edit any forum content', 'delete any forum content', /* 'access content overview', 'access administration pages', */), '12 forum admin');
     $this->edndel_any_content_rid = (int) $this->drupalCreateRole(array('create forum content', 'edit any forum content', 'delete any forum content', 'view own unpublished content'), '13 edndel any content');
     $this->edndel_own_content_rid = (int) $this->drupalCreateRole(array('create forum content', 'edit own forum content', 'delete own forum content'), '14 edndel own content');
     $this->edit_any_content_rid = (int) $this->drupalCreateRole(array('create forum content', 'edit any forum content', 'view own unpublished content'), '15 edit any content');
@@ -529,6 +530,28 @@ class ForumAccessBaseTestCase extends ForumTestCase {
             $this->clickLink(t('Edit'));
             $this->assertResponse(200, "^^^ $account->name can edit $test_type topic.");
 
+            // Check that moderator gets administrator properties.
+            if ($is_super_user || user_access('administer nodes', $account)) {
+              $this->assertText(t('Revision information'), "$account->name sees Revision information.");
+              $this->assertText(t('Comment settings'), "$account->name sees Comment settings.");
+              $this->assertText(t('Publishing options'), "$account->name sees Publishing options.");
+              if (user_access('administer nodes', $account)) {
+                $this->assertText(t('Menu settings'), "$account->name sees Menu settings.");
+                $this->assertText(t('Authoring information'), "$account->name sees Authoring information.");
+              }
+              else {
+                $this->assertNoText(t('Menu settings'), "$account->name does not see Menu settings.");
+                $this->assertNoText(t('Authoring information'), "$account->name does not see Authoring information.");
+              }
+            }
+            else {
+              $this->assertNoText(t('Revision information'), "$account->name does not see Revision information.");
+              $this->assertNoText(t('Comment settings'), "$account->name does not see Comment settings.");
+              $this->assertNoText(t('Publishing options'), "$account->name does not see Publishing options.");
+              $this->assertNoText(t('Menu settings'), "$account->name does not see Menu settings.");
+              $this->assertNoText(t('Authoring information'), "$account->name does not see Authoring information.");
+            }
+
             // Check whether we can Delete our topic.
             if (empty($account->access['delete']) && !user_access('delete any forum content', $account) &&
                 !(user_access('delete own forum content', $account) && $node->uid == $account->uid) &&
@@ -606,7 +629,7 @@ class ForumAccessBaseTestCase extends ForumTestCase {
   }
 
 
-  function createForum($id, $tag, $description, array $accesses) {
+  function createFAForum($id, $tag, $description, array $accesses) {
     $edit = array(
       'name' => "Forum $id $tag",
       'description' => $description,
@@ -646,7 +669,7 @@ class ForumAccessBaseTestCase extends ForumTestCase {
     $this->setUp2();
     taxonomy_term_delete(1);
     $this->pass("#########################<br />#$id - $tag Configuration test @" . (time() - $this->time), '<a id="jump1" href="#jump2">/\<br />######<br />\/</a>');
-    $forum = $this->createForum($id, $tag, $description, $accesses);
+    $forum = $this->createFAForum($id, $tag, $description, $accesses);
     $this->checkForum($forum);
     $this->pass("#########################<br />#$id - END $tag Configuration test @" . (time() - $this->time), '<a id="jump2" href="#jump3">/\<br />######<br />\/</a>');
   }
@@ -657,7 +680,8 @@ class ForumAccessBaseTestCase extends ForumTestCase {
   function dpm($input, $name = NULL) {
     if (module_exists('devel') && user_access('access devel information')) {
       $export = kprint_r($input, TRUE, $name);
-      trigger_error($export);
+      $trigger_error = 'trigger_error';
+      $trigger_error($export);
     }
   }
 

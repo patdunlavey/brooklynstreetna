@@ -30,7 +30,7 @@ function megamenu_schema() {
         'type' => 'int',
         'unsigned' => FALSE,
         'size' => 'tiny',
-        'default' => '0',
+        'default' => 0,
       ),
       'skin' => array(
         'description' => t('Name of skin (CSS class)'),
@@ -64,4 +64,22 @@ function megamenu_schema() {
   );
 
   return $schema;
+}
+
+/**
+ * Alter the schema to correct the default storage of the enabled state 
+ */
+function megamenu_update_7000() {
+  $result = '';
+  $spec = array(
+        'description' => t('Enabled state of a mega menu: 1 = enabled, 0 = dissabled'),
+        'type' => 'int',
+        'unsigned' => FALSE,
+        'size' => 'tiny',
+        'default' => 0,
+      );
+  
+  $result = db_change_field('megamenu', 'enabled', 'enabled', $spec);
+  
+  return $result;
 }

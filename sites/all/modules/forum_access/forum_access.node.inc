@@ -95,7 +95,6 @@ function _forum_access_node_form(&$form, &$form_state) {
 
   // True node administrators are all powerful and do NOT get their forms rewritten here.
   if (user_access('bypass node access') && empty($user->_forum_access_moderator)) {
-//TODO: revise
     return;
   }
 
@@ -157,7 +156,6 @@ function _forum_access_node_form(&$form, &$form_state) {
 
   // Apply modifications for Moderators (by role or uid).
   if (!user_access('administer nodes') && forum_access_is_moderator($user, $forum_tid)) {
-    $allowed_elements = variable_get('forum_access_allowed_node_edit_elements', array('nid', 'vid', 'uid', 'created', 'type', 'language', 'changed', 'title', 'shadow', 'forum_tid', 'additional_settings', 'revision_information', 'author', 'options', 'actions', 'body', 'taxonomy_forums', 'form_build_id', 'form_token', 'form_id', 'comment_settings', 'attachments'));
     $allowed_options = variable_get('forum_access_allowed_node_edit_options', array('status', 'sticky', 'subscriptions_notify'));
     foreach (element_children($form) as $key) {
       switch ($key) {
@@ -171,12 +169,6 @@ function _forum_access_node_form(&$form, &$form_state) {
             $form['buttons']['delete']['#access'] = FALSE;
           }
           break;
-        default:
-          $form[$key]['#access'] = (array_search($key, $allowed_elements) !== FALSE);
-      }
-
-      // Some elements need special treatment.
-      switch ($key) {
         case 'author':
           $form['author']['#disabled'] = TRUE;
           break;
@@ -186,6 +178,13 @@ function _forum_access_node_form(&$form, &$form_state) {
               $form['options'][$key2]['#access'] = FALSE;
             }
           }
+          $form['options']['#access'] = 1;
+          break;
+        case 'revision_information':
+          $form['revision_information']['#access'] = 1;
+          break;
+        case 'comment_settings':
+          $form['comment_settings']['#access'] = 1;
           break;
         case 'shadow':
           $form['shadow']['#description'] .= '<br />' . t('Note: Access to this topic and its shadows is controlled by the forum that contains the topic.');

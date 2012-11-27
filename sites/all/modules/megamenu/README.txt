@@ -51,7 +51,7 @@ Consider the following example menu:
 
 To create a mega menu out of a menu structured in this way:
 1. Enable this module just like any other Drupal module
-2. Go to the mega menu configuration page: admin/build/megamenu
+2. Go to the mega menu configuration page: admin/config/user-interface/megamenu
 3. Check the enable box next to the menu you want to convert into a mega menu
 4. Click save
 5. Click "configure this mega"

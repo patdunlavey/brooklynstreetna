@@ -23,8 +23,8 @@ module_load_include('inc', 'megamenu', 'megamenu.utilities');
 function megamenu_init() {
   // Add JavaScript
   $timeout = variable_get('megamenu_menu_timeout',500);
-  $sizewait = variable_get('megamenu_menu_timeout',500);
-  $hoverwait = variable_get('megamenu_menu_timeout',500);
+  $sizewait = variable_get('megamenu_menu_sizewait',500);
+  $hoverwait = variable_get('megamenu_menu_hoverwait',500);
   drupal_add_js(array('megamenu' => array('timeout' => $timeout,'sizewait' => $sizewait,'hoverwait' => $hoverwait)),'setting');
   drupal_add_js(drupal_get_path('module', 'megamenu') .'/megamenu.js');
 
@@ -44,7 +44,7 @@ function megamenu_init() {
   }
   */
   if (module_exists('i18n')) {
-    module_load_include('module', 'i18n', 'i18nmenu/i18nmenu');
+    module_load_include('module', 'i18n', 'i18n_menu/i18n_menu');
   }
 
 }
@@ -116,7 +116,7 @@ function megamenu_block_info(){
   $menus = _megamenu_enabled_menus();
   foreach ($menus as $menu_name) {
     $menudetails = menu_load($menu_name);
-    $blocks[] = array(
+    $blocks[$menu_name] = array(
       'info' => t('Megamenu - ' . $menudetails['title']),
       'cache' => DRUPAL_NO_CACHE,
     );
@@ -127,7 +127,14 @@ function megamenu_block_info(){
 function megamenu_block_view($delta = 0) {
   $menus = _megamenu_enabled_menus();
   if($menus){
-    $output = megamenu_theme_menu_tree($menus[$delta]);
+    $key = array_search( $delta, $menus );
+    $output = '';
+    if( $key !== false ) {
+      $output = &drupal_static( __FUNCTION__ . $delta );
+      if( !isset( $output ) ) {
+        $output = megamenu_theme_menu_tree($menus[$key]);
+      }
+    }
 
     $block['subject'] = ''; // TODO: temp debugging value, should be left unset in production
     $block['content'] = $output;
@@ -135,45 +142,8 @@ function megamenu_block_view($delta = 0) {
     return $block;
   }
 }
-/**
- * Implementation of hook_block()
- *
- * I think there will be problems with how these are being referenced
- * will need a table for "enabled megas" or something sooner than later?
- *
- */
-/*
-function megamenu_block($op = 'list', $delta = '0', $edit = array()) {
-  switch ($op) {
-    case 'list':
-      $block_count = 0;
-      $menus = _megamenu_enabled_menus();
-      if ($menus) {
-        foreach ($menus as $menu_name) {
-          $menudetails = menu_load($menu_name);
-          $blocks[$block_count]['info'] = t('Megamenu - ' . $menudetails['title']);
-          $blocks[$block_count]['cache'] = BLOCK_NO_CACHE; //set this to true for production version?
-          ++$block_count;
-        }
-      }
-     return $blocks;
-     break;
-    case 'view':
-      $menus = _megamenu_enabled_menus();
-      $output = megamenu_theme_menu_tree($menus[$delta]);
 
-      $block['subject'] = ''; // TODO: temp debugging value, should be left unset in production
-      $block['content'] = $output;
 
-      return $block;
-      break;
-    case 'configure':
-      break;
-    case 'save':
-      break;
-  }
-}
-*/
 /**
  * Implementation of hook_help()
  */
@@ -210,8 +180,8 @@ function megamenu_help($path, $arg) {
 function megamenu_theme_menu_tree($menu_name) {
   $menutree = _megamenu_get_menu_tree($menu_name);
   
-  if (module_exists('i18n')) {
-    i18nmenu_localize_tree($menutree);
+  if (function_exists('i18n_menu_localize_tree')) {
+   $menutree = i18n_menu_localize_tree($menutree);
   }
   /*
   $arr1=array('data1',array('data'=>'data1','class'=>'aaa'),'data3');

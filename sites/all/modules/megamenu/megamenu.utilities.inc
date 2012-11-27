@@ -241,8 +241,8 @@ function _megamenu_is_skin_default($menu_name) {
 function _megamenu_get_translated_menu_title($current_menu, $mlid) {
   $item = menu_link_load($mlid);
   
-  if (module_exists('i18n')) {
-    $item['title']  = _i18nmenu_get_item_title($item);
+  if (module_exists('i18n_menu')) {
+    $item['title']  = _i18n_menu_link_title($item);
   }
 
   return $item['title'];
