@@ -1,1 +1,2 @@
 [17-Jan-2012 09:14:03] PHP Fatal error:  Allowed memory size of 67108864 bytes exhausted (tried to allocate 404169 bytes) in /home/brooklyn/public_html/includes/cache.inc on line 418
+[27-Nov-2012 14:12:02] PHP Fatal error:  require_once() [<a href='function.require'>function.require</a>]: Failed opening required '/home/brooklyn/public_html/sites/all/modules/admin_menu/admin_views/plugins/views_plugin_display_system.inc' (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/brooklyn/public_html/includes/bootstrap.inc on line 3066
