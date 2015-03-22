@@ -1,5 +1,6 @@
 <?php
-/*
+
+/**
  * @file
  * Provides tokens by the shoutbox_message data type.
  */
@@ -57,7 +58,7 @@ function shoutbox_rules_tokens($type, $tokens, array $data = array(), array $opt
       switch ($name) {
 
         case 'shoutbox-message-id':
-	    $replacements[$original] = check_plain($shoutbox_message->shout_id);
+          $replacements[$original] = check_plain($shoutbox_message->shout_id);
           break;
         case 'shoutbox-message-body':
           $replacements[$original] = check_plain($shoutbox_message->shout);
@@ -65,13 +66,9 @@ function shoutbox_rules_tokens($type, $tokens, array $data = array(), array $opt
         case 'shoutbox-message-body-raw':
           $replacements[$original] = $shoutbox_message->shout;
           break;
-
       }
     }
-
   }
 
   return $replacements;
-
 }
-

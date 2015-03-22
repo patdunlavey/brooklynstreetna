@@ -59,43 +59,43 @@ function theme_shoutbox_post($variables) {
 
   global $user;
   $img_links = '';
-  // Gather moderation links
+  // Gather moderation links.
   if ($links) {
     foreach ($links as $link) {
-      $link_html = '<img src="' . $link['img'] . '"  width="' . $link['img_width'] . '" height="' . $link['img_height'] . '" alt="' . $link['title'] . '" class="shoutbox-imglink"/>';
+      $link_html = '<img src="' . $link['img'] . '"  width="' . $link['img_width'] . '" height="' . $link['img_height'] . '" title="' . $link['title'] . '" alt="' . $link['title'] . '" class="shoutbox-imglink"/>';
       $link_url = 'shout/' . $shout->shout_id . '/' . $link['action'];
       $img_links = l($link_html, $link_url, array('html' => TRUE, 'query' => array('destination' => drupal_get_path_alias($_GET['q'])))) . $img_links;
     }
   }
 
-  // Generate user name with link
+  // Generate user name with link.
   $user_name = shoutbox_get_user_link($shout);
 
-  // Generate title attribute
+  // Generate title attribute.
   $title = t('Posted !date at !time by !name', array('!date' => format_date($shout->created, 'custom', 'm/d/y'), '!time' => format_date($shout->created, 'custom', 'h:ia'), '!name' => $shout->nick));
 
-  // Add to the shout classes
+  // Add to the shout classes.
   $shout_classes = array();
   $shout_classes[] = 'shoutbox-msg';
 
-  // Check for moderation
+  // Check for moderation.
   $approval_message = NULL;
   if ($shout->moderate == 1) {
     $shout_classes[] = 'shoutbox-unpublished';
-    $approval_message = '&nbsp;(' . t('This shout is waiting for approval by a moderator.') . ')';
+    $approval_message = '&nbsp;<span id="shoutbox-wait-aprroval">(' . t('This shout is waiting for approval by a moderator.') . ')</span>';
   }
 
-  // Check for specific user class
+  // Check for specific user class.
   $user_classes = array();
   $user_classes[] = 'shoutbox-user-name';
   if ($shout->uid == $user->uid) {
     $user_classes[] = 'shoutbox-current-user-name';
   }
-  else if ($shout->uid == 0) {
+  elseif ($shout->uid == 0) {
     $user_classes[] = 'shoutbox-anonymous-user';
   }
 
-  // Build the post
+  // Build the post.
   $post = '';
   $post .= '<div class="' . implode(' ', $shout_classes) . '" title="' . $title . '">';
   $post .= '<div class="shoutbox-admin-links">' . $img_links . '</div>';
@@ -105,7 +105,7 @@ function theme_shoutbox_post($variables) {
   $format = variable_get('shoutbox_time_format', 'ago');
   switch ($format) {
     case 'ago':
-      $post .=  t('!interval ago', array('!interval' => format_interval(REQUEST_TIME - $shout->created)));
+      $post .= t('!interval ago', array('!interval' => format_interval(REQUEST_TIME - $shout->created)));
       break;
     case 'small':
     case 'medium':
@@ -128,12 +128,12 @@ function theme_shoutbox_post($variables) {
  *   String containing HTML formatted page.
  */
 function theme_shoutbox_page($variables) {
-  // Render each child
-  // Then put it into a table
+  // Render each child.
+  // Then put it into a table.
   $shouts = array();
   $sorted_shouts = element_children($variables['rows'], TRUE);
-  foreach($sorted_shouts as $key) {
-      $shouts[] = array(drupal_render($variables['rows'][$key]));
+  foreach ($sorted_shouts as $key) {
+    $shouts[] = array(drupal_render($variables['rows'][$key]));
   }
 
   if (!empty($shouts)) {
@@ -141,7 +141,7 @@ function theme_shoutbox_page($variables) {
   }
   else {
     $shouts = t('There are currently no shouts');
-  }  
+  }
   return $shouts;
 }
 
@@ -156,23 +156,23 @@ function theme_shoutbox_post_forbidden() {
 }
 
 /**
- * Theme the link on the bottom of the block pointing to the shout page
+ * Theme the link on the bottom of the block pointing to the shout page.
  *
  * @param $page_path
- *     Path to the shout page
+ *     Path to the shout page.
  */
 function theme_shoutbox_block_page_link($variables) {
   return '<div class="shoutbox-all-shouts">' . l(t('All shouts'), $variables['path']) . '</div>';
 }
 
 /**
- * Theme the block message regarding auto-update interval
+ * Theme the block message regarding auto-update interval.
  *
  * @param $interval
- *     The number of seconds the shouts auto-refresh
+ *     The number of seconds the shouts auto-refresh.
  */
 function theme_shoutbox_interval_message($variables) {
-  // Check if autoupdate is enabled
+  // Check if autoupdate is enabled.
   $interval = $variables['interval'];
   if ($interval) {
     return '<div class="shoutbox-interval-msg">' . t('Shouts automatically update every !interval seconds', array('!interval' => $interval)) . '</div>';

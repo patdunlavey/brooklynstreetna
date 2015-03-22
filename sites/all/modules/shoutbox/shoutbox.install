@@ -85,12 +85,11 @@ function shoutbox_schema() {
   return $schema;
 }
 
-
 /**
  * Uninstall shoutbox.
  */
 function shoutbox_uninstall() {
- 
+
   // Delete variables.
   variable_del('shoutbox_expire');
   variable_del('shoutbox_ascending');
@@ -138,7 +137,7 @@ function shoutbox_update_5200() {
 
 /**
  * This update prepares the shoutbox database for
- * shoutbox 6.2.x
+ * shoutbox 6.2.x.
  */
 function shoutbox_update_6200() {
 
@@ -156,7 +155,7 @@ function shoutbox_update_6200() {
 }
 
 /**
- * Remove size restrictions on shout messages
+ * Remove size restrictions on shout messages.
  */
 function shoutbox_update_6201() {
   $shout_spec = array(
@@ -164,12 +163,12 @@ function shoutbox_update_6201() {
     'size' => 'big',
     'not null' => TRUE,
     'description' => 'The shout post.',
-  ); 
+  );
   db_change_field('shoutbox', 'shout', 'shout', $shout_spec);
 }
 
 /**
- * Add module field to the schema
+ * Add module field to the schema.
  */
 function shoutbox_update_6202() {
   $module_spec = array(

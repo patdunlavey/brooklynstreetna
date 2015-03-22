@@ -1,10 +1,9 @@
 <?php
+
 /**
  * @file
  * Install, update and uninstall functions for the shoutbox_domain module.
- *
  */
-
 
 /**
  * Implements hook_schema().
@@ -31,11 +30,9 @@ function shoutbox_domain_schema() {
   return $schema;
 }
 
-
 /**
  * Implements hook_uninstall().
  */
 function shoutbox_domain_uninstall() {
-
+  
 }
-

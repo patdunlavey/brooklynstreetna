@@ -6,7 +6,7 @@
 function shoutbox_user_menu() {
   return array(
     'shoutbox/user/%user' => array(
-      'title' => 'Shout box',
+      'title' => 'Shoutbox',
       'page callback' => 'shoutbox_user_page',
       'page arguments' => array(2),
       'access callback' => '_shoutbox_user_page_access',
@@ -33,8 +33,7 @@ function shoutbox_user_page($user) {
   // Set the title with the user's name
   $name = check_plain($user->name);
   // TODO(disterics): Make this themeable
-  drupal_set_title(t('!name shout box', array('!name' => l($name . '\'s', "user/{$user->uid}"))),
-                   PASS_THROUGH);
+  drupal_set_title(t('!name Shoutbox', array('!name' => l($name . '\'s', "user/{$user->uid}"))), PASS_THROUGH);
 
   // Return normal shoutbox page
   return shoutbox_view();
@@ -64,7 +63,7 @@ function shoutbox_user_shoutbox($op, &$shout, &$a1 = NULL, $form_state = NULL) {
 
     case 'insert':
       // Determine if the shout was added for a user
-      if (array_key_exists('uid', $form_state['values']) && 
+      if (array_key_exists('uid', $form_state['values']) &&
           $uid = $form_state['values']['uid']) {
         shoutbox_user_save($shout, $uid);
       }
@@ -81,8 +80,8 @@ function shoutbox_user_shoutbox($op, &$shout, &$a1 = NULL, $form_state = NULL) {
 
     case 'delete':
       db_delete('shoutbox_user')
-        ->condition('shout_id', $shout->shout_id)
-        ->execute();
+          ->condition('shout_id', $shout->shout_id)
+          ->execute();
       break;
 
     case 'js path':

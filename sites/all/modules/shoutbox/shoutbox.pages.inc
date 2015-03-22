@@ -2,11 +2,11 @@
 
 /**
  * @file
- *   Page callbacks for the shoutbox module.
+ * Page callbacks for the shoutbox module.
  */
 
 /**
- * Admin settings form
+ * Admin settings form.
  */
 function shoutbox_admin_settings($form, &$form_state) {
   $form['display_settings'] = array(
@@ -46,6 +46,12 @@ function shoutbox_admin_settings($form, &$form_state) {
     '#default_value' => variable_get('shoutbox_ascending', 1),
     '#description' => t('When checked, new shouts will appear on the top instead of the bottom.'),
   );
+  $form['display_settings']['shoutbox_defaultname'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Default the name field to the logged in user name'),
+    '#default_value' => variable_get('shoutbox_defaultname', 1),
+    '#description' => t('When checked, "Your name/nick" will be replaced by the logged in user name'),
+  );
   $form['display_settings']['shoutbox_widget_type'] = array(
     '#type' => 'radios',
     '#title' => t('Input form type'),
@@ -75,13 +81,12 @@ function shoutbox_admin_settings($form, &$form_state) {
     '#description' => t('When checked, shoutboxes outside of specific contexts will be restricted to general shouts. There are modules that utilize the Shoutbox API, such as Shoutbox group, that will enter shouts meant to only be displayed in certain locations. Checking this will insure that those shouts are only displayed by the modules responsible for creating them.'),
   );
 
-  // Generate choices for profile fields
-  if (module_exists('profile')) {
-    // TODO: Make this work in D7
-    $choices = array();
-    $fields = db_query("SELECT name FROM {profile_fields} ORDER BY name ASC");
-    while ($field = db_fetch_object($fields)) {
-      $choices[$field->name] = $field->name;
+  $choices = array();
+  // Generate choices for profile fields or custom fields for user 
+  if (module_exists('profile') && db_table_exists('profile_field')) {
+    $fields = db_query("SELECT name FROM {profile_field} ORDER BY name ASC");
+    foreach ($fields as $field) {
+      $choices['profile!' . $field->name] = $field->name;
     }
 
     $form['display_settings']['shoutbox_profile_name'] = array(
@@ -92,14 +97,34 @@ function shoutbox_admin_settings($form, &$form_state) {
       '#description' => t('Select an existing custom profile field to use as the user name.'),
     );
   }
+  elseif (db_table_exists('field_config') && db_table_exists('field_config_instance')) {
+    $fields = db_query("SELECT fi.field_name,fi.id FROM {field_config} as f,{field_config_instance} as fi
+                          WHERE f.id=fi.field_id AND f.type='text'
+                          AND fi.entity_type='user' AND fi.bundle='user' ORDER BY field_name ASC");
+
+    foreach ($fields as $field) {
+      $field_name = str_replace("field_", "", $field->field_name);
+      $choices['custom<split>' . $field_name] = $field_name;
+    }
+  }
+  //if custom fields found add select box
+  if (count($choices) > 0) {
+    $form['display_settings']['shoutbox_profile_name'] = array(
+      '#type' => 'select',
+      '#title' => t('Use profile field for user name'),
+      '#options' => array(0 => '- None -') + $choices,
+      '#default_value' => variable_get('shoutbox_profile_name', 0),
+      '#description' => t('Select an existing custom profile field to use as the user name or select - None - for the regular username.'),
+    );
+  }
   else {
     $form['display_settings']['shoutbox_profile_name'] = array(
       '#type' => 'item',
-      '#title' => t('Use profile field for user name'),
-      '#description' => t('Enable the profile module to allow Shoutbox to use the user\'s real name instead of the username.'),
+      '#title' => t('Use custom field for user name'),
+      '#description' => t('Add custom field in <a href="@page_url">Account Setting</a> or enable the profile module to allow
+                            Shoutbox to use different field instead of the username.', array('@page_url' => '../people/accounts/fields')),
     );
   }
-
   // TODO: Figure out how to create a form for filter
   /* $form['shoutbox_filter_format'] = _shoutbox_filter_form(); */
   /* $form['shoutbox_filter_format']['#collapsed'] = FALSE; */
@@ -154,7 +179,7 @@ function shoutbox_admin_settings($form, &$form_state) {
 }
 
 /**
- * Validate the admin settings form
+ * Validate the admin settings form.
  */
 function shoutbox_admin_settings_validate($form, &$form_state) {
   if (!is_numeric($form_state['values']['shoutbox_showamount_block'])) {
@@ -187,7 +212,7 @@ function shoutbox_admin_settings_validate($form, &$form_state) {
 }
 
 /**
- * Shout delete confirmation form
+ * Shout delete confirmation form.
  *
  * @param shout_id
  *   The shout id of the shout being edited.
@@ -216,10 +241,10 @@ function shoutbox_delete_form($form, &$form_state, $shout) {
 function shoutbox_delete_form_submit($form, &$form_state) {
   if ($form_state['clicked_button']['#value'] == t('Confirm')) {
     if (is_numeric($form_state['values']['shout_id'])) {
-      //  Load the shout
+      // Load the shout.
       $shout = shoutbox_shout_load($form_state['values']['shout_id']);
 
-      //  Delete the shout
+      // Delete the shout.
       shoutbox_delete_shout($shout);
 
       drupal_set_message(t('Your shout was deleted.'));
@@ -232,7 +257,7 @@ function shoutbox_delete_form_submit($form, &$form_state) {
 }
 
 /**
- * Shout publish confirmation form
+ * Shout publish confirmation form.
  *
  * @param shout_id
  *   The shout id of the shout being published.
@@ -255,7 +280,7 @@ function shoutbox_publish_form($form, &$form_state, $shout) {
 }
 
 /**
- * Handle the publish form submission
+ * Handle the publish form submission.
  */
 function shoutbox_publish_form_submit($form, &$form_state) {
   if ($form_state['clicked_button']['#value'] == t('Confirm')) {
@@ -265,7 +290,7 @@ function shoutbox_publish_form_submit($form, &$form_state) {
 }
 
 /**
- * Shout unpublish confirmation form
+ * Shout unpublish confirmation form.
  *
  * @param shout_id
  *   The shout id of the shout being unpublished.
@@ -288,7 +313,7 @@ function shoutbox_unpublish_form($form, &$form_state, $shout) {
 }
 
 /**
- * Handle the unpublish form submission
+ * Handle the unpublish form submission.
  */
 function shoutbox_unpublish_form_submit($form, &$form_state) {
   if ($form_state['clicked_button']['#value'] == t('Confirm')) {
@@ -355,7 +380,7 @@ function shoutbox_edit_form($form, &$form_state, $shout) {
 }
 
 /**
- * Handle the edit form submission
+ * Handle the edit form submission.
  *
  * @param $form_id
  *   The form ID of the form.
@@ -364,34 +389,33 @@ function shoutbox_edit_form($form, &$form_state, $shout) {
  */
 function shoutbox_edit_form_submit($form, &$form_state) {
   // if (is_numeric($form_state['values']['shout_id'])) {
-  // Load the existing shout if shout id is valid
+  // Load the existing shout if shout id is valid.
   $shout = shoutbox_shout_load($form_state['values']['shout_id']);
   if ($shout) {
-    // Edit the shout object
+    // Edit the shout object.
     $shout->shout = $form_state['values']['shout'];
     if (isset($form_state['values']['moderate'])) {
       $shout->moderate = $form_state['values']['moderate'];
     }
     $shout->changed = REQUEST_TIME;
 
-    // Alert other modules about the update
+    // Alert other modules about the update.
     $a1 = NULL;
     shoutbox_invoke('edit', $shout, $a1, $form_state);
 
-    // Update the shout
+    // Update the shout.
     // TODO Please review the conversion of this statement to the D7 database API syntax.
     /* db_query("UPDATE {shoutbox} SET shout = '%s', moderate = %d, changed = %d WHERE shout_id = %d", $shout->shout, $shout->moderate, $shout->changed, $shout->shout_id) */
-    
+
     db_update('shoutbox')
-      ->fields(
-        array(
+        ->fields(array(
           'shout' => $shout->shout,
           'moderate' => $shout->moderate,
           'changed' => $shout->changed,
         ))
-      ->condition('shout_id', $shout->shout_id)
-      ->execute();
-    
+        ->condition('shout_id', $shout->shout_id)
+        ->execute();
+
     drupal_set_message(t('Your shout has been saved.'));
     $form_state['redirect'] = '';
   }

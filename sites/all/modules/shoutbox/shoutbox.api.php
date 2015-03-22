@@ -18,7 +18,7 @@
 function hook_shoutbox($op, &$shout, &$a1 = NULL, $form_state = NULL) {
   switch ($op) {
     case 'insert':
-      // A shout was just added
+      // A shout was just added.
       break;
 
     case 'presave':
@@ -30,46 +30,46 @@ function hook_shoutbox($op, &$shout, &$a1 = NULL, $form_state = NULL) {
       break;
 
     case 'edit':
-      // An edited shout is about to be saved
+      // An edited shout is about to be saved.
       break;
 
     case 'view':
-      // A shout is about to be viewed
+      // A shout is about to be viewed.
       break;
 
     case 'unpublish':
-      // A shout is being unpublished
-      // Will not be called if a shout is initially saved unpublished
+      // A shout is being unpublished.
+      // Will not be called if a shout is initially saved unpublished.
       break;
 
     case 'publish':
-      // A shout is being published
-      // Will not be called if a shout is initially saved published
+      // A shout is being published.
+      // Will not be called if a shout is initially saved published.
       break;
 
     case 'delete':
-      // A shout was just removed
+      // A shout was just removed.
       break;
 
     case 'link':
-      // Alter the link to the shoutbox page
+      // Alter the link to the shoutbox page.
       $a1 = 'shoutbox/something/custom';
       break;
 
     case 'form':
-      // Alter the shoutbox add form
+      // Alter the shoutbox add form.
       $a1['new_field'] = array('#type' => 'textbox', etc);
       break;
 
     case 'js path':
-      // Alter the AJAX callback path
+      // Alter the AJAX callback path.
       $a1 = 'something/js/callback';
       break;
 
     case 'context':
-      // Set a shoutbox "context", for example, indicating the current group
+      // Set a shoutbox "context", for example, indicating the current group.
       // These will be passed into hook_db_rewrite_query() so you can alter
-      // the shout query accordingly
+      // the shout query accordingly.
       $a1['shoutbox_group'] = $group->nid;
       break;
   }

@@ -1,10 +1,9 @@
 <?php
+
 /**
  * @file
  * Install, update and uninstall functions for the shoutbox_user module.
- *
  */
-
 
 /**
  * Implements hook_schema().
@@ -31,4 +30,3 @@ function shoutbox_user_schema() {
 
   return $schema;
 }
-
