@@ -3,7 +3,6 @@
 /**
  * RULES INTEGRATION - EVENTS
  */
-
 /**
  * @file Includes any rules integration provided by shoutbox.
  */
@@ -19,74 +18,73 @@ function shoutbox_rules_event_info() {
 
   $items = array(
     'shoutbox_insert' => $defaults + array(
-      'label' => t('After adding a shout'),
-      'variables' => array(
-        'user' => array(
-          'type' => 'user',
-          'label' => t('Shoutbox message actor'),
-        ),
-        'shout_message' => array(
-          'type' => 'shoutbox_message',
-          'label' => t('Shoutbox message'),
-        ),
-      ),
+  'label' => t('After adding a shout'),
+  'variables' => array(
+    'user' => array(
+      'type' => 'user',
+      'label' => t('Shoutbox message actor'),
+    ),
+    'shout_message' => array(
+      'type' => 'shoutbox_message',
+      'label' => t('Shoutbox message'),
+    ),
+  ),
     ),
     'shoutbox_edit' => $defaults + array(
-      'label' => t('After updating a shout'),
-      'variables' => array(
-        'user' => array(
-          'type' => 'user',
-          'label' => t('The user who edited the shout.'),
-        ),
-        'shout_message' => array(
-          'type' => 'shoutbox_message',
-          'label' => t('updated shoutbox message'),
-        ),
-      ),
+  'label' => t('After updating a shout'),
+  'variables' => array(
+    'user' => array(
+      'type' => 'user',
+      'label' => t('The user who edited the shout.'),
+    ),
+    'shout_message' => array(
+      'type' => 'shoutbox_message',
+      'label' => t('updated shoutbox message'),
+    ),
+  ),
     ),
     'shoutbox_publish' => $defaults + array(
-      'label' => t('After a shout has been published'),
-      'variabless' => array(
-        'user' => array(
-          'type' => 'user',
-          'label' => t('The user who published the shout.'),
-        ),
-        'shout_message' => array(
-          'type' => 'shoutbox_message',
-          'label' => t('The shout text that was published.'),
-        ),
-      ),
+  'label' => t('After a shout has been published'),
+  'variabless' => array(
+    'user' => array(
+      'type' => 'user',
+      'label' => t('The user who published the shout.'),
+    ),
+    'shout_message' => array(
+      'type' => 'shoutbox_message',
+      'label' => t('The shout text that was published.'),
+    ),
+  ),
     ),
     'shoutbox_unpublish' => $defaults + array(
-      'label' => t('After a shout has been unpublished'),
-      'variables' => array(
-        'user' => array(
-          'type' => 'user',
-          'label' => t('The user who unpublished the shout.'),
-        ),
-        'shout_message' => array(
-          'type' => 'shoutbox_message',
-          'label' => t('The shout text that was unpublished.'),
-        ),
-      ),
+  'label' => t('After a shout has been unpublished'),
+  'variables' => array(
+    'user' => array(
+      'type' => 'user',
+      'label' => t('The user who unpublished the shout.'),
+    ),
+    'shout_message' => array(
+      'type' => 'shoutbox_message',
+      'label' => t('The shout text that was unpublished.'),
+    ),
+  ),
     ),
     'shoutbox_delete' => $defaults + array(
-      'label' => t('After a shout has been deleted'),
-      'variables' => array(
-        'user' => array(
-          'type' => 'user',
-          'label' => t('The user who deleted the shout.'),
-        ),
-        'shout_message' => array(
-          'type' => 'shoutbox_message',
-          'label' => t('The shout text that was deleted.'),
-        ),
-      ),
+  'label' => t('After a shout has been deleted'),
+  'variables' => array(
+    'user' => array(
+      'type' => 'user',
+      'label' => t('The user who deleted the shout.'),
+    ),
+    'shout_message' => array(
+      'type' => 'shoutbox_message',
+      'label' => t('The shout text that was deleted.'),
+    ),
+  ),
     ),
   );
 
   return $items;
-
 }
 
 /**
@@ -116,5 +114,3 @@ function shoutbox_rules_shoutbox($op, &$shout, &$a1 = NULL, $form_state = NULL) 
     rules_invoke_event('shoutbox_' . $op, $user->uid, $shout);
   }
 }
-
-

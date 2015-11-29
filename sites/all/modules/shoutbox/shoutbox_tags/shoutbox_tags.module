@@ -39,8 +39,8 @@ function shoutbox_tags_shoutbox($op, &$shout, &$a1 = NULL, $form_state = NULL) {
     case 'delete':
       // Remove any tag references to this shout
       db_delete('shoutbox_tags')
-        ->condition('shout_id', $shout->shout_id)
-        ->execute();
+          ->condition('shout_id', $shout->shout_id)
+          ->execute();
       break;
 
     case 'view':
@@ -133,7 +133,7 @@ function shoutbox_tags_extract($shout) {
 
       // Remove a trailing non alphanumeric
       if (preg_match('/\W/', substr($word, strlen($word) - 1))) {
-        $word = substr($word, 0, strlen($word) -1);
+        $word = substr($word, 0, strlen($word) - 1);
       }
 
       // Store the tag

@@ -1,10 +1,9 @@
 <?php
+
 /**
  * @file
  * Install, update and uninstall functions for the shoutbox_points module.
- *
  */
-
 
 /**
  * Implements hook_uninstall().
