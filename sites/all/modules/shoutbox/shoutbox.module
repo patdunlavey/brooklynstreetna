@@ -8,6 +8,15 @@
  */
 define('DEFAULTMSGTEXT', 'Enter Message');
 define('DEFAULTNICK', 'Your Name/Nick');
+//define "shout" word
+$sShout = variable_get('shoutbox_replace_singular', 'shout');
+define('DEFAULTSHOUTSINGULAR', $sShout);
+$sShoutCamelCase = substr($sShout, 0, 1) . substr($sShout, 1);
+define('DEFAULTSHOUTSINGULAR_CC', $sShoutCamelCase);
+$sShout = variable_get('shoutbox_replace_plural', 'shouts');
+define('DEFAULTSHOUTPLURAL', $sShout);
+$sShoutCamelCase = substr($sShout, 0, 1) . substr($sShout, 1);
+define('DEFAULTSHOUTPLURAL_CC', $sShoutCamelCase);
 
 /**
  * Implements hook_help().
@@ -37,13 +46,13 @@ function shoutbox_menu() {
     'type' => MENU_NORMAL_ITEM,
   );
   $items['shoutbox/js/view'] = array(
-    'title' => 'View shouts',
+    'title' => 'View ' . DEFAULTSHOUTPLURAL,
     'page callback' => 'shoutbox_js_view',
     'access arguments' => array('access shoutbox'),
     'type' => MENU_CALLBACK,
   );
   $items['shout/%shoutbox_shout/edit'] = array(
-    'title' => 'Edit shout',
+    'title' => 'Edit ' . DEFAULTSHOUTSINGULAR,
     'page callback' => 'drupal_get_form',
     'page arguments' => array('shoutbox_edit_form', 1),
     'access callback' => '_shoutbox_user_access',
@@ -52,7 +61,7 @@ function shoutbox_menu() {
     'file' => $file,
   );
   $items['shout/%shoutbox_shout/delete'] = array(
-    'title' => 'Delete shout',
+    'title' => 'Delete ' . DEFAULTSHOUTSINGULAR,
     'page callback' => 'drupal_get_form',
     'page arguments' => array('shoutbox_delete_form', 1),
     'access callback' => '_shoutbox_user_access',
@@ -61,7 +70,7 @@ function shoutbox_menu() {
     'file' => $file,
   );
   $items['shout/%shoutbox_shout/publish'] = array(
-    'title' => 'Publish shout',
+    'title' => 'Publish ' . DEFAULTSHOUTSINGULAR,
     'page callback' => 'drupal_get_form',
     'page arguments' => array('shoutbox_publish_form', 1),
     'access callback' => '_shoutbox_user_access',
@@ -70,7 +79,7 @@ function shoutbox_menu() {
     'file' => $file,
   );
   $items['shout/%shoutbox_shout/unpublish'] = array(
-    'title' => 'Unpublish shout',
+    'title' => 'Unpublish ' . DEFAULTSHOUTSINGULAR,
     'page callback' => 'drupal_get_form',
     'page arguments' => array('shoutbox_unpublish_form', 1),
     'access callback' => '_shoutbox_user_access',
@@ -170,26 +179,26 @@ function shoutbox_permission() {
   return array(
     'administer shoutbox' => array(
       'title' => t('Administer shoutbox'),
-      'description' => t('Administer shouts and shout settings.'),
+      'description' => t('Administer shoutbox and ' . DEFAULTSHOUTPLURAL . ' settings.'),
     ),
     'moderate shoutbox' => array(
-      'title' => t('Moderate shouts'),
+      'title' => t('Moderate ' . DEFAULTSHOUTPLURAL),
       'description' => t('Enable/Disable posts from other users.'),
     ),
     'access shoutbox' => array(
       'title' => t('View shoutbox'),
     ),
     'post shouts' => array(
-      'title' => t('Post shouts'),
+      'title' => t('Post ' . DEFAULTSHOUTPLURAL),
     ),
     'post shouts without approval' => array(
-      'title' => t('Skip shout approval'),
+      'title' => t('Skip ' . DEFAULTSHOUTSINGULAR . ' approval'),
     ),
     'edit own shouts' => array(
-      'title' => t('Edit own shouts'),
+      'title' => t('Edit own ' . DEFAULTSHOUTPLURAL),
     ),
     'delete own shouts' => array(
-      'title' => t('Delete own shouts'),
+      'title' => t('Delete own ' . DEFAULTSHOUTPLURAL),
     ),
   );
 }
@@ -354,31 +363,26 @@ function shoutbox_view($block = FALSE) {
 function shoutbox_get_user_link($shout) {
   $link = '';
 
-  /* if($shout->uid > 0)
-    {
+  if ($shout->uid > 0) {
     // See if we can use a custom profile field for the name.
-    if($field = variable_get('shoutbox_profile_name', ''))
-    {
-    $aElements = explode("<split>", $field);
-    if(count($aElements) == 2)
-    {
-    if($aElements[0] == "profile")
-    {
-    $name = db_query("SELECT v.value FROM {profile_value} v INNER JOIN {profile_field} f ON v.fid = f.fid
-    WHERE f.name = :name AND v.uid = :uid", array(':name'=>$aElements[1], ':uid'=>$shout->uid))->fetchField();
-    $shout->nick = $name ? $name : $shout->nick;
-    }
-    elseif($aElements[0] == "custom")
-    {
-    $name = db_query("SELECT f.field_".$aElements[1]."_value FROM field_data_field_".$aElements[1]." as f
+    if ($field = variable_get('shoutbox_profile_name', '')) {
+      $aElements = explode("<split>", $field);
+      if (count($aElements) == 2) {
+        if ($aElements[0] == "profile") {
+          $name = db_query("SELECT v.value FROM {profile_value} v INNER JOIN {profile_field} f ON v.fid = f.fid
+    WHERE f.name = :name AND v.uid = :uid", array(':name' => $aElements[1], ':uid' => $shout->uid))->fetchField();
+          $shout->nick = $name ? $name : $shout->nick;
+        }
+        elseif ($aElements[0] == "custom") {
+          $name = db_query("SELECT f.field_" . $aElements[1] . "_value FROM field_data_field_" . $aElements[1] . " as f
     WHERE f.entity_type='user' AND f.bundle='user'
-    AND f.entity_id=:id", array(':id'=>$shout->uid))->fetchField();
+    AND f.entity_id=:id", array(':id' => $shout->uid))->fetchField();
 
-    $shout->nick = $name ? $name : $shout->nick;
+          $shout->nick = $name ? $name : $shout->nick;
+        }
+      }
     }
-    }
-    }
-    } */
+  }
 
   // Build object that theme_username can use.
   $object = new stdClass();
@@ -476,14 +480,20 @@ function shoutbox_add_form($form) {
     '#markup' => '<div id="shoutbox-error" class="messages error" title="Click to close"></div>',
   );
 
-  $default_msg = t(DEFAULTMSGTEXT);
   // The shout field.
   $form['wrapper']['message'] = array(
     '#type' => variable_get('shoutbox_widget_type', 'textfield'),
-    '#default_value' => $default_msg,
-    '#size' => 15,
-    // '#title' => $default_msg,
+    '#attributes' => array('placeholder' => variable_get('shoutbox_default_message')),
+    '#size' => "",
     '#maxlength' => $max ? $max : NULL,
+  );
+
+  $form['wrapper']['nick_name_area'] = array(
+    '#type' => 'item',
+  );
+
+  $form['wrapper']['nick_submit_area'] = array(
+    '#type' => 'item',
   );
 
   // The nickname field.
@@ -511,34 +521,71 @@ function shoutbox_add_form($form) {
       }
     }
 
-    $form['wrapper']['nick'] = array(
+    $form['wrapper']['nick_name_area']['nick'] = array(
       '#type' => 'textfield',
       '#default_value' => $default_nick,
       '#maxlength' => $max ? $max : NULL,
+      '#size' => "",
       '#attributes' => array('disabled' => 'disabled'),
     );
   }
   else {
-    $form['wrapper']['nick'] = array(
-      '#type' => 'textfield',
-      '#default_value' => $default_nick,
-      '#maxlength' => $max ? $max : NULL,
-    );
+    if ($default_nick == t(DEFAULTNICK)) {
+      $form['wrapper']['nick_name_area']['nick'] = array(
+        '#type' => 'textfield',
+        '#attributes' => array('placeholder' => $default_nick),
+        '#maxlength' => $max ? $max : NULL,
+        '#size' => ""
+      );
+    }
+    else {
+      $form['wrapper']['nick_name_area']['nick'] = array(
+        '#type' => 'textfield',
+        '#default_value' => $default_nick,
+        '#maxlength' => $max ? $max : NULL,
+        '#size' => "",
+        '#required' => TRUE,
+//        '#ajax' => array(
+//          'callback' => '_validate_name',
+//          'wrapper' => 'name-error-icon-container',
+//          'method' => 'html',
+//          'effect' => 'none',
+//          'progress' => array(
+//            'message' => NULL,
+//          ),
+//        ),
+      );
+    }
   }
 
-  //throbber image path
-  $sThrobberImage = '<img alt="Loading.." title="Loading.." src="' . base_path() . drupal_get_path('module', 'shoutbox') . '/images/throbber.gif"/>';
-  // Placeholder for ajax throbber image.
-  $form['wrapper']['throbber'] = array(
-    '#type' => 'item',
-    '#markup' => '<div id="shoutbox-throbber" class="throbber"></div>'
-  );
+//  // Placeholder for ajax throbber image.
+//  $form['wrapper']['nick_submit_area']['throbber'] = array(
+//    '#type' => 'item',
+//    '#markup' => '<div id="shoutbox-throbber" class="throbber"></div>'
+//  );
+  
+  $bAjaxSubmitEnable = variable_get('shoutbox_submit_type', 'ajax')=='ajax'?1:0;
 
   // The submit button.
-  $form['wrapper']['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Shout'),
-  );
+  if($bAjaxSubmitEnable)
+  {
+    $form['wrapper']['nick_submit_area']['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t(DEFAULTSHOUTSINGULAR_CC),
+      '#ajax' => array(
+        'callback' => '_handle_form_submit',
+        'effect' => 'fade',
+        'progress' => array('message' => NULL, 'type' => 'throbber'),
+      ),
+    );
+  }
+  else
+  {
+    $form['wrapper']['nick_submit_area']['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t(DEFAULTSHOUTSINGULAR_CC)
+    );
+  }
 
   $interval = shoutbox_get_refresh_rate();
   if ($interval) {
@@ -548,12 +595,13 @@ function shoutbox_add_form($form) {
       '#theme' => 'shoutbox_interval_message',
     );
   }
-
-  $form['js'] = array(
+  
+  $form['shoutbox_ajax'] = array(
     '#type' => 'hidden',
-    '#value' => 0,
+    '#value' => $bAjaxSubmitEnable,
+    '#attributes' => array('id' => 'shoutbox_ajax')
   );
-
+    
   $shout = new stdClass();
   // Allow modules to alter the form.
   shoutbox_invoke('form', $shout, $form);
@@ -561,6 +609,67 @@ function shoutbox_add_form($form) {
   $form['#prefix'] = '<div class="shoutbox-add-form">';
   $form['#suffix'] = '</div>';
   return $form;
+}
+
+function _validate_name($form, $form_state) {
+  if ($form_state['values']['name'] != '') 
+    $output = 'OK';
+  else 
+    $output = 'Enter a value';
+
+  return $output;
+}
+
+function _handle_form_submit($form, $form_state) {
+  // Collect error.
+  $error = form_get_errors();
+  // Clear error for all the cases.  
+  drupal_get_messages();
+  // Logic behind error.
+  if (!empty($error)) {
+    $errormsg = '';
+    foreach ($error as $msg) {
+      $errormsg .= $errormsg != '' ? '<br/>' . $msg : $msg;
+    }
+
+    // Java script function to process error.
+    $commands[] = ajax_command_invoke(NULL, "error_javascript_call");
+    $commands[] = ajax_command_html('#shoutbox-error', $errormsg);
+    $commands[] = ajax_command_invoke('#shoutbox-error', 'show');  
+    if (module_exists('captcha'))    
+    {
+        //$html = render(drupal_get_form('module_captcha_form'));
+        //$commands[] = ajax_command_replace(".captcha", $html);    
+    }
+    
+    return array('#type' => 'ajax', '#commands' => $commands);
+    
+    //render(drupal_get_form('module_captcha_form'))
+    //$form['wrapper']['error_message'] = array('#markup' => '<div id="shoutbox-error" class="messages error" title="Click to close">'.$errormsg.'</div>');
+    //$form_state['rebuild'] = TRUE;
+    //return $form;
+  }
+  else {
+    $commands[] = ajax_command_invoke(NULL, "success_javascript_call");
+    //$commands[] = ajax_command_replace("#stateDiv", render($form['state']));
+    //$commands[] = ajax_command_replace("#load_captcha", render($form['captcha']));
+    
+    return array('#type' => 'ajax', '#commands' => $commands);
+    //return $form;
+  }
+}
+
+//implement custom function
+//function example_alter_captcha_text(&$element) {
+//  $element['captcha_widgets']['captcha_response']['#title'] = t('Captcha Response Title Goes Here');
+//  return $element;
+//}
+
+//implement hook_form_alter()
+function shoutbox_form_alter(&$form, &$form_state, $form_id) {
+  if($form_id == 'contact_site_form') 
+    $form['captcha']['#after_build'][] = 'example_alter_captcha_text';
+  
 }
 
 /**
@@ -601,14 +710,7 @@ function shoutbox_add_form_submit($form, &$form_state) {
   // Alert other modules about the new shout via hook.
   shoutbox_invoke('insert', $shout, $a1, $form_state);
 
-  // Check is Javascript was enabled.
-  if ($_POST['js']) {
-    exit();
-  }
-  else {
-    // Return as usual.
-    return;
-  }
+  return;
 }
 
 /**
@@ -625,16 +727,25 @@ function shoutbox_add_form_validate($form, &$form_state) {
   $form_state['values']['nick'] = trim($form_state['values']['nick']);
 
   $max = variable_get('shoutbox_max_length', 255);
+  $bErrorFound = false;
   // Empty nickname.
   if (!$form_state['values']['nick'] || $form_state['values']['nick'] == t(DEFAULTNICK)) {
     form_set_error('nick', t('You must enter a nickname.'));
+    $bErrorFound = true;
   }
   // Empty message.
   if (!$form_state['values']['message'] || $form_state['values']['message'] == t(DEFAULTMSGTEXT)) {
     form_set_error('message', t('You must enter a message.'));
+    $bErrorFound = true;
   }
-  elseif ($max && (strlen($form_state['values']['message']) > $max)) {
-    form_set_error('message', t('Your shout is too long. Only @max characters are allowed.', array('@max' => $max)));
+  elseif ($max && (strlen(utf8_decode($form_state['values']['message'])) > $max)) {
+    form_set_error('message', t('Your ' . DEFAULTSHOUTSINGULAR . ' is too long. Only @max characters are allowed.', array('@max' => $max)));
+    $bErrorFound = true;
+  }
+
+  // Check user's permission and set message.
+  if (!$bErrorFound && !_shoutbox_user_access('post shouts without approval')) {
+    drupal_set_message(t('Your ' . DEFAULTSHOUTSINGULAR . ' is waiting for approval by a moderator.'), 'warning');
   }
 }
 
@@ -708,6 +819,9 @@ function shoutbox_display_posts($show_amount, $pager = FALSE) {
 
       // Add edit/delete links depending on user's permissions.
       $shoutlinks = _shoutbox_get_links($shout);
+
+      //replace /n lines with <br/>
+      $shout->shout = nl2br($shout->shout);
 
       // Allow other modules to alter the shout before it's viewed.
       shoutbox_invoke('view', $shout);
@@ -815,6 +929,9 @@ function _shoutbox_user_access($permission, $shout = NULL) {
     //  If not user owned the post or editing priviledges have timed out ...
     $access_granted = (($user_owned) && (!$user_timeout));
   }
+
+  drupal_alter('shoutbox_user_access', $access_granted, $permission, $shout);
+
   return $access_granted;
 }
 
@@ -909,10 +1026,10 @@ function shoutbox_moderate_shout($shout_id, $moderate) {
         ->execute();
 
     if (!$moderate) {
-      drupal_set_message(t('The shout was published.'));
+      drupal_set_message(t('The ' . DEFAULTSHOUTSINGULAR . ' was published.'));
     }
     else {
-      drupal_set_message(t('The shout was unpublished.'));
+      drupal_set_message(t('The ' . DEFAULTSHOUTSINGULAR . ' was unpublished.'));
     }
   }
 }
@@ -946,7 +1063,7 @@ function shoutbox_views_api() {
 function shoutbox_entity_info() {
   return array(
     'shout' => array(
-      'label' => t('Shout'),
+      'label' => t(DEFAULTSHOUTSINGULAR_CC),
       'base table' => 'shoutbox',
       'entity keys' => array(
         'id' => 'shout_id',
@@ -962,8 +1079,8 @@ function shoutbox_action_info() {
   return array(
     'shoutbox_shout_delete_action' => array(
       'type' => 'shout',
-      'description' => t('Delete Shouts'),
-      'label' => t('Delete Shoutbox shout'),
+      'description' => t('Delete ' . DEFAULTSHOUTPLURAL_CC),
+      'label' => t('Delete Shoutbox ' . DEFAULTSHOUTSINGULAR),
       'configurable' => FALSE,
       'hooks' => array(
         'shout' => array('delete'),
