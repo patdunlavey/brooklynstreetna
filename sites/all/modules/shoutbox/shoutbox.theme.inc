@@ -21,22 +21,22 @@ function theme_shoutbox_external_files() {
  */
 function theme_shoutbox_links() {
   $links['edit']['action'] = 'edit';
-  $links['edit']['title'] = 'Edit Shout';
+  $links['edit']['title'] = 'Edit ' . DEFAULTSHOUTSINGULAR_CC;
   $links['edit']['img'] = base_path() . drupal_get_path('module', 'shoutbox') . '/images/icon_edit.png';
   $links['edit']['img_width'] = 15;
   $links['edit']['img_height'] = 15;
   $links['delete']['action'] = 'delete';
-  $links['delete']['title'] = 'Delete Shout';
+  $links['delete']['title'] = 'Delete ' . DEFAULTSHOUTSINGULAR_CC;
   $links['delete']['img'] = base_path() . drupal_get_path('module', 'shoutbox') . '/images/icon_delete.png';
   $links['delete']['img_width'] = 15;
   $links['delete']['img_height'] = 15;
   $links['publish']['action'] = 'publish';
-  $links['publish']['title'] = 'Publish';
+  $links['publish']['title'] = 'Publish ' . DEFAULTSHOUTSINGULAR_CC;
   $links['publish']['img'] = base_path() . drupal_get_path('module', 'shoutbox') . '/images/thumb_up.png';
   $links['publish']['img_width'] = 15;
   $links['publish']['img_height'] = 15;
   $links['unpublish']['action'] = 'unpublish';
-  $links['unpublish']['title'] = 'Unpublish';
+  $links['unpublish']['title'] = 'Unpublish ' . DEFAULTSHOUTSINGULAR_CC;
   $links['unpublish']['img'] = base_path() . drupal_get_path('module', 'shoutbox') . '/images/thumb_down.png';
   $links['unpublish']['img_width'] = 15;
   $links['unpublish']['img_height'] = 15;
@@ -82,7 +82,7 @@ function theme_shoutbox_post($variables) {
   $approval_message = NULL;
   if ($shout->moderate == 1) {
     $shout_classes[] = 'shoutbox-unpublished';
-    $approval_message = '&nbsp;<span id="shoutbox-wait-aprroval">(' . t('This shout is waiting for approval by a moderator.') . ')</span>';
+    $approval_message = '&nbsp;<span id="shoutbox-wait-aprroval">(' . t('This ' . DEFAULTSHOUTSINGULAR . ' is waiting for approval by a moderator.') . ')</span>';
   }
 
   // Check for specific user class.
@@ -140,7 +140,7 @@ function theme_shoutbox_page($variables) {
     $shouts = theme('table', array('header' => NULL, 'rows' => $shouts));
   }
   else {
-    $shouts = t('There are currently no shouts');
+    $shouts = t('There are currently no ' . DEFAULTSHOUTPLURAL);
   }
   return $shouts;
 }
@@ -152,7 +152,7 @@ function theme_shoutbox_page($variables) {
  *   String containing HTML formatted access denied message.
  */
 function theme_shoutbox_post_forbidden() {
-  return '<div class="shoutbox-msg">' . t('You\'re not permitted to post shouts.') . '</div>';
+  return '<div class="shoutbox-msg">' . t('You\'re not permitted to post ' . DEFAULTSHOUTPLURAL . '.') . '</div>';
 }
 
 /**
@@ -162,7 +162,7 @@ function theme_shoutbox_post_forbidden() {
  *     Path to the shout page.
  */
 function theme_shoutbox_block_page_link($variables) {
-  return '<div class="shoutbox-all-shouts">' . l(t('All shouts'), $variables['path']) . '</div>';
+  return '<div class="shoutbox-all-shouts">' . l(t('All ' . DEFAULTSHOUTPLURAL), $variables['path']) . '</div>';
 }
 
 /**
@@ -175,6 +175,6 @@ function theme_shoutbox_interval_message($variables) {
   // Check if autoupdate is enabled.
   $interval = $variables['interval'];
   if ($interval) {
-    return '<div class="shoutbox-interval-msg">' . t('Shouts automatically update every !interval seconds', array('!interval' => $interval)) . '</div>';
+    return '<div class="shoutbox-interval-msg">' . t(DEFAULTSHOUTPLURAL_CC . ' automatically update every !interval seconds', array('!interval' => $interval)) . '</div>';
   }
 }
