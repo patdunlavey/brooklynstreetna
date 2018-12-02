@@ -105,8 +105,6 @@ function shoutbox_uninstall() {
   variable_del('shoutbox_restrict_general_shouts');
   variable_del('shoutbox_time_format');
   variable_del('shoutbox_widget_type');
-  variable_del('shoutbox_submit_type');
-  variable_del('shoutbox_default_message');
 }
 
 /**

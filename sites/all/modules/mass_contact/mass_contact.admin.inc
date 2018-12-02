@@ -33,7 +33,7 @@ function mass_contact_admin_categories() {
     }
 
     $rows[] = array(
-      check_plain($category->category),
+      $category->category,
       implode('<br/>', array_filter($recipients)),
       ($category->selected ? t('Yes') : t('No')),
       l(t('edit'), 'admin/config/system/mass_contact/edit/' . $category->cid),
