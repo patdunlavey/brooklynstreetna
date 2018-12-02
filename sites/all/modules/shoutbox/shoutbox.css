@@ -1,3 +1,9 @@
+.shoutbox-add-form .fieldset-wrapper {
+    margin: 0 auto;
+    padding: 0 10px;
+    text-align: center;
+    margin-top: 15px
+}
 
 #shoutbox-body {
     margin: 0px;
@@ -9,8 +15,12 @@
 }
 
 .shoutbox-add-form .form-item {
-    margin: 0;
     display: inline;
+    float: left;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    width: 100%;
+    text-align: left;
 }
 
 .shoutbox-view-form .form-submit {
@@ -21,7 +31,7 @@
 #shoutbox-error {
     display: none;
     cursor: pointer;
-    width: 91%;
+    float: left;
     margin: 0px 0px 10px 0px;
 }
 
@@ -87,9 +97,16 @@ span.shoutbox-msg-time {
     text-align: center;
 }
 
+.shoutbox-add-form .form-item-message, .shoutbox-add-form .form-type-item {
+    /*    float:left;
+        width:100%;*/
+    margin-bottom: 4px;
+}
+
 .shoutbox-add-form input#edit-message {
-    width: 99%;
-    height: 22px;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .shoutbox-unpublished {
@@ -97,8 +114,7 @@ span.shoutbox-msg-time {
     border: 1px solid #ED541D;
 }
 
-#shoutbox-wait-aprroval
-{
+#shoutbox-wait-aprroval {
     color: #8C2E0B;
 }
 
@@ -126,7 +142,41 @@ span.shoutbox-msg-time {
     margin: 2px 2px 0 0;
 }
 
-#shoutbox-add-form .form-disabled input{
+#edit-nick {
+    float: left;
+    width: 30%;
+    min-width: 100px;
+}
+
+#edit-nick-submit-area {
+    /*width: 100%;*/
+    margin-bottom: 5px;
+}
+
+/*#edit-shoutbox-replace-shout .form-disabled input{
     background:none;
     color: #3B3B3B;
+}*/
+
+#shoutbox-admin-settings #edit-shoutbox-replace-shout {
+
+}
+
+#edit-shoutbox-replace-shout .description {
+    float: left;
+}
+
+#shoutbox-admin-settings .form-item-shoutbox-replace-singular, #shoutbox-admin-settings .form-item-shoutbox-replace-plural {
+    display: inline;
+    float: left;
+    margin-right: 10px;
+}
+
+#shoutbox-admin-settings .form-item-shoutbox-replace-plural {
+    width: 80%;
+}
+
+/****block rules****/
+#block-shoutbox-shoutbox #edit-nick {
+    width: auto;
 }

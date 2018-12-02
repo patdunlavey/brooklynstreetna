@@ -105,6 +105,8 @@ function shoutbox_uninstall() {
   variable_del('shoutbox_restrict_general_shouts');
   variable_del('shoutbox_time_format');
   variable_del('shoutbox_widget_type');
+  variable_del('shoutbox_submit_type');
+  variable_del('shoutbox_default_message');
 }
 
 /**
@@ -179,4 +181,20 @@ function shoutbox_update_6202() {
     'initial' => 'shoutbox',
   );
   db_add_field('shoutbox', 'module', $module_spec);
+}
+
+/**
+ * Add default value to "hostname" column.
+ */
+function shoutbox_update_7000() {
+
+  $field_info = array(
+    'type' => 'varchar',
+    'length' => 255,
+    'default' => 'localhost',
+    'not null' => TRUE,
+    'description' => 'The hostname where the post originated.',
+  );
+
+  db_change_field('shoutbox', 'hostname', 'hostname', $field_info);
 }

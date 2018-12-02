@@ -9,18 +9,14 @@
  * Admin settings form.
  */
 function shoutbox_admin_settings($form, &$form_state) {
+  //add css to admin section
+  drupal_add_css(drupal_get_path('module', 'shoutbox') . '/shoutbox.css');
+
+  /***start - display_settings****/
   $form['display_settings'] = array(
     '#type' => 'fieldset',
     '#title' => t('Display settings'),
     '#collapsible' => TRUE,
-  );
-  $form['display_settings']['shoutbox_max_length'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Maximum amount of characters in a shout'),
-    '#default_value' => variable_get('shoutbox_max_length', 255),
-    '#size' => 5,
-    '#required' => TRUE,
-    '#description' => t('Set the amount of allowed characters per shout. Enter 0 for no limit. This will not affect existing shouts.'),
   );
   $form['display_settings']['shoutbox_showamount_block'] = array(
     '#type' => 'textfield',
@@ -62,6 +58,19 @@ function shoutbox_admin_settings($form, &$form_state) {
       'textarea' => t('Textarea'),
     ),
   );
+
+  // set the default message of the shoutfield
+  $form['display_settings']['shoutbox_default_message'] = array(
+    '#type' => 'textfield',
+    '#title' => t('The default message of the shoutfield'),
+    '#default_value' => variable_get('shoutbox_default_message', DEFAULTMSGTEXT),
+    '#size' => 60,
+    '#maxlength' => 255,
+    '#required' => FALSE,
+    '#description' => t("Set the default message in the inputfield of the shoutbox. If you don't want to show a message, leave this input field empty."),
+    '#attributes' => array('class' => array('shoutbox_default_message')),
+  );
+
   $form['display_settings']['shoutbox_time_format'] = array(
     '#type' => 'select',
     '#title' => t('Time format'),
@@ -82,7 +91,7 @@ function shoutbox_admin_settings($form, &$form_state) {
   );
 
   $choices = array();
-  // Generate choices for profile fields or custom fields for user 
+  // Generate choices for profile fields or custom fields for user
   if (module_exists('profile') && db_table_exists('profile_field')) {
     $fields = db_query("SELECT name FROM {profile_field} ORDER BY name ASC");
     foreach ($fields as $field) {
@@ -125,17 +134,71 @@ function shoutbox_admin_settings($form, &$form_state) {
                             Shoutbox to use different field instead of the username.', array('@page_url' => '../people/accounts/fields')),
     );
   }
-  // TODO: Figure out how to create a form for filter
-  /* $form['shoutbox_filter_format'] = _shoutbox_filter_form(); */
-  /* $form['shoutbox_filter_format']['#collapsed'] = FALSE; */
-  /* $form['shoutbox_filter_format']['shoutbox_escape_html'] = array( */
-  /*   '#type' => 'checkbox', */
-  /*   '#title' => t('Escape all HTML & formatting'), */
-  /*   '#default_value' => variable_get('shoutbox_escape_html', 1), */
-  /*   '#description' => '<strong>' . t('Checking this will ignore the input format selected below, and escape all HTML from the shouts.') . '</strong>', */
-  /*   '#weight' => -10, */
-  /* ); */
 
+  $form['display_settings']['shoutbox_replace_shout'] = array(
+    '#type' => 'item',
+    '#title' => t('Change "shout" globally'),
+    '#description' => t('Set replacement for "shout". Does not apply to admin section. (Please use lowercase letters e.g. shout,shouts)'),
+  );
+
+  $form['display_settings']['shoutbox_replace_shout']['shoutbox_replace_singular'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Singular'),
+    '#default_value' => variable_get('shoutbox_replace_singular', 'shout'),
+    '#size' => 15,
+    '#required' => FALSE,
+    '#attributes' => array('class' => array('shoutbox_replace')),
+  );
+
+  $form['display_settings']['shoutbox_replace_shout']['shoutbox_replace_plural'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Plural'),
+    '#default_value' => variable_get('shoutbox_replace_plural', 'Shout'),
+    '#size' => 15,
+    '#required' => FALSE,
+    '#attributes' => array('class' => array('shoutbox_replace')),
+  );
+  /***end - display_settings****/
+
+  /***start - filter_format****/
+  _shoutbox_filter_form();
+  $form['shoutbox_filter_format'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Shoutbox input format'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  );
+
+  $form['shoutbox_filter_format']['shoutbox_escape_html'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Escape all HTML & formatting'),
+    '#default_value' => variable_get('shoutbox_escape_html', 1),
+    '#description' => '<strong>' . t('Checking this will ignore the input format selected below, and escape all HTML from the shouts.') . '</strong>'
+  );
+
+  $form['shoutbox_filter_format']['shoutbox_max_length'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Maximum amount of characters in a shout'),
+    '#default_value' => variable_get('shoutbox_max_length', 255),
+    '#size' => 5,
+    '#required' => TRUE,
+    '#description' => t('Set the amount of allowed characters per shout. Enter 0 for no limit. This will not affect existing shouts.'),
+  );
+
+
+  $form['shoutbox_filter_format']['shoutbox_submit_type'] = array(
+    '#type' => 'radios',
+    '#title' => t('Sumbission type'),
+    '#default_value' => variable_get('shoutbox_submit_type', 'post'),
+    '#description' => t('Choose the type of submission used for a shout. <br/><small>Please note that "Ajax" submission does not cooperate(yet) with captcha module</small>'),
+    '#options' => array(
+      'ajax' => t('Ajax'),
+      'post' => t('Post'),
+    ),
+  );
+  /***end - filter_format****/
+
+  /***start - time_settings****/
   $form['time_settings'] = array(
     '#type' => 'fieldset',
     '#title' => t('Time settings'),
@@ -174,6 +237,7 @@ function shoutbox_admin_settings($form, &$form_state) {
     '#maxlength' => 4,
     '#description' => t('Shouts will be permanently deleted after the number of days specified.  Shouts will never expire when this is set to 0.'),
   );
+  /***start - time_settings****/
 
   return system_settings_form($form);
 }
@@ -209,6 +273,39 @@ function shoutbox_admin_settings_validate($form, &$form_state) {
   if (!is_numeric($form_state['values']['shoutbox_expire'])) {
     form_set_error('shoutbox_expire', t('Expiration setting must be a numeric value'));
   }
+
+  if ($form_state['values']['shoutbox_replace_singular'] != '' || $form_state['values']['shoutbox_replace_singular'] != '') {
+    {
+
+      if ($form_state['values']['shoutbox_replace_singular'] == '') {
+        form_set_error('shoutbox_replace_singular', t('Both fields must be empty or filled.'));
+      }
+      elseif ($form_state['values']['shoutbox_replace_plural'] == '') {
+        form_set_error('shoutbox_replace_plural', t('Both fields must be empty or filled.'));
+      }
+      else {
+
+        $bProceed = TRUE;
+        if (is_numeric($form_state['values']['shoutbox_replace_singular'])) {
+          form_set_error('shoutbox_replace_singular', t('"shout" replacement must contain only letters.'));
+        }
+
+        if (is_numeric($form_state['values']['shoutbox_replace_plural'])) {
+          form_set_error('shoutbox_replace_plural', t('"shout" replacement must contain only letters.'));
+        }
+
+        if ($bProceed) {
+          if (isset($form_state['values']['shoutbox_replace_singular']) && $form_state['values']['shoutbox_replace_singular'] != '') {
+            $form_state['values']['shoutbox_replace_singular'] = strtolower($form_state['values']['shoutbox_replace_singular']);
+          }
+
+          if (isset($form_state['values']['shoutbox_replace_plural']) && $form_state['values']['shoutbox_replace_plural'] != '') {
+            $form_state['values']['shoutbox_replace_plural'] = strtolower($form_state['values']['shoutbox_replace_plural']);
+          }
+        }
+      }
+    }
+  }
 }
 
 /**
@@ -231,7 +328,7 @@ function shoutbox_delete_form($form, &$form_state, $shout) {
   );
   $path = drupal_get_destination();
   $path = $path['destination'];
-  $form = confirm_form($form, t('Are you sure you want to delete this shout?'), $path);
+  $form = confirm_form($form, t('Are you sure you want to delete this ' . DEFAULTSHOUTSINGULAR . '?'), $path);
   return $form;
 }
 
@@ -247,7 +344,7 @@ function shoutbox_delete_form_submit($form, &$form_state) {
       // Delete the shout.
       shoutbox_delete_shout($shout);
 
-      drupal_set_message(t('Your shout was deleted.'));
+      drupal_set_message(t('Your ' . DEFAULTSHOUTSINGULAR . ' was deleted.'));
       $form_state['redirect'] = '';
     }
     else {
@@ -275,7 +372,7 @@ function shoutbox_publish_form($form, &$form_state, $shout) {
     '#value' => $shout->shout_id,
   );
   $path = array_key_exists('destination', $_GET) ? $_GET['destination'] : '';
-  $form = confirm_form($form, t('Are you sure you want to publish this shout?'), $path);
+  $form = confirm_form($form, t('Are you sure you want to publish this ' . DEFAULTSHOUTSINGULAR . '?'), $path);
   return $form;
 }
 
@@ -308,7 +405,7 @@ function shoutbox_unpublish_form($form, &$form_state, $shout) {
     '#value' => $shout->shout_id,
   );
 
-  $form = confirm_form($form, t('Are you sure you want to unpublish this shout?'), $_GET['destination']);
+  $form = confirm_form($form, t('Are you sure you want to unpublish this ' . DEFAULTSHOUTSINGULAR . '?'), $_GET['destination']);
   return $form;
 }
 
@@ -408,15 +505,15 @@ function shoutbox_edit_form_submit($form, &$form_state) {
     /* db_query("UPDATE {shoutbox} SET shout = '%s', moderate = %d, changed = %d WHERE shout_id = %d", $shout->shout, $shout->moderate, $shout->changed, $shout->shout_id) */
 
     db_update('shoutbox')
-        ->fields(array(
-          'shout' => $shout->shout,
-          'moderate' => $shout->moderate,
-          'changed' => $shout->changed,
-        ))
-        ->condition('shout_id', $shout->shout_id)
-        ->execute();
+      ->fields(array(
+        'shout' => $shout->shout,
+        'moderate' => $shout->moderate,
+        'changed' => $shout->changed,
+      ))
+      ->condition('shout_id', $shout->shout_id)
+      ->execute();
 
-    drupal_set_message(t('Your shout has been saved.'));
+    drupal_set_message(t('Your ' . DEFAULTSHOUTSINGULAR . ' has been saved.'));
     $form_state['redirect'] = '';
   }
   else {

@@ -74,3 +74,24 @@ function hook_shoutbox($op, &$shout, &$a1 = NULL, $form_state = NULL) {
       break;
   }
 }
+
+/**
+ * Alter access to shoutbox.
+ *
+ * This is useful for modules customizing access to shoutbox. All shout views,
+ * edits, deletes and moderation will go through this function.
+ *
+ * @see _shoutbox_user_access().
+ *
+ * @param Boolean $access_granted
+ *   The final returned value for access granted or denied.
+ * @param String $permission
+ *   The hook_permission string key to check against.
+ * @param Object $shout
+ *   If applicable, the function will check against the shout.
+ */
+function hook_shoutbox_user_access_alter(&$access_granted, $permission, $shout = NULL) {
+  if (module_exists('domain')) {
+    $access_granted = _shoutbox_domain_user_access();
+  }
+}

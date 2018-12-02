@@ -18,11 +18,17 @@ class ShoutboxBaseTestCase extends DrupalWebTestCase {
     // to grant access.
     $this->sb_view_user = $this->drupalCreateUser(array('access shoutbox'));
     // Shoutbox super user.
-    $this->sb_super_user = $this->drupalCreateUser(array('administer shoutbox', 'access shoutbox'));
+    $this->sb_super_user = $this->drupalCreateUser(array(
+      'administer shoutbox',
+      'access shoutbox'
+    ));
     $this->sb_non_user = $this->drupalCreateUser(array());
-    $this->sb_edit_user = $this->drupalCreateUser(array('access shoutbox', 'post shouts',
+    $this->sb_edit_user = $this->drupalCreateUser(array(
+      'access shoutbox',
+      'post shouts',
       'edit own shouts',
-      'post shouts without approval'));
+      'post shouts without approval'
+    ));
 
     // Admin user for configuring blocks.
     $admin_user = $this->drupalCreateUser(array('administer blocks'));
@@ -42,7 +48,10 @@ class ShoutboxBaseTestCase extends DrupalWebTestCase {
    * Given a shout, queries the database for the id of the shout.
    */
   function getShoutId($message, $uid) {
-    $id = db_query('SELECT shout_id FROM {shoutbox} WHERE shout = :shout AND uid = :uid', array(':shout' => $message, ':uid' => $uid,))->fetchField();
+    $id = db_query('SELECT shout_id FROM {shoutbox} WHERE shout = :shout AND uid = :uid', array(
+      ':shout' => $message,
+      ':uid' => $uid,
+    ))->fetchField();
     // debug($id);
     return $id;
   }
@@ -76,9 +85,12 @@ class ShoutboxBaseWithShoutsTestCase extends ShoutboxBaseTestCase {
     parent::setUp();  // Enable any modules required for the test.
     $this->sb_users = array();
     for ($i = 0; $i < 5; $i++) {
-      $sb_edit_user = $this->drupalCreateUser(array('access shoutbox', 'post shouts',
+      $sb_edit_user = $this->drupalCreateUser(array(
+        'access shoutbox',
+        'post shouts',
         'edit own shouts',
-        'post shouts without approval'));
+        'post shouts without approval'
+      ));
       $this->drupalLogin($sb_edit_user);
       $message = $this->randomName(32) . ' ' . $this->randomName(5);
       $edit = array();
@@ -148,9 +160,12 @@ class ShoutboxViewTestCase extends ShoutboxBaseTestCase {
     $messages = array();
 
     for ($i = 0; $i < 5; $i++) {
-      $sb_edit_user = $this->drupalCreateUser(array('access shoutbox', 'post shouts',
+      $sb_edit_user = $this->drupalCreateUser(array(
+        'access shoutbox',
+        'post shouts',
         'edit own shouts',
-        'post shouts without approval'));
+        'post shouts without approval'
+      ));
       $this->drupalLogin($sb_edit_user);
       $message = $this->randomName(32) . ' ' . $this->randomName(5);
       $edit = array();
@@ -270,9 +285,12 @@ class ShoutboxDeleteTestCase extends ShoutboxBaseTestCase {
 
   public function setUp() {
     parent::setUp();
-    $this->sb_delete_user = $this->drupalCreateUser(array('access shoutbox', 'post shouts',
+    $this->sb_delete_user = $this->drupalCreateUser(array(
+      'access shoutbox',
+      'post shouts',
       'delete own shouts',
-      'post shouts without approval'));
+      'post shouts without approval'
+    ));
     $this->drupalLogin($this->sb_delete_user);
   }
 
@@ -325,9 +343,13 @@ class ShoutboxModerateTestCase extends ShoutboxBaseWithShoutsTestCase {
 
   public function setUp() {
     parent::setUp();
-    $this->sb_moderator = $this->drupalCreateUser(array('access shoutbox', 'post shouts',
-      'delete own shouts', 'moderate shoutbox',
-      'post shouts without approval'));
+    $this->sb_moderator = $this->drupalCreateUser(array(
+      'access shoutbox',
+      'post shouts',
+      'delete own shouts',
+      'moderate shoutbox',
+      'post shouts without approval'
+    ));
     $this->drupalLogin($this->sb_moderator);
   }
 
@@ -384,8 +406,11 @@ class ShoutboxModerateTestCase extends ShoutboxBaseWithShoutsTestCase {
    * Test users who need approval before shouts are accepted.
    */
   function testShoutboxModeratedUser() {
-    $sb_moded_user = $this->drupalCreateUser(array('access shoutbox', 'post shouts',
-      'edit own shouts',));
+    $sb_moded_user = $this->drupalCreateUser(array(
+      'access shoutbox',
+      'post shouts',
+      'edit own shouts',
+    ));
     $this->drupalLogin($sb_moded_user);
     $message = $this->randomName(32) . ' ' . $this->randomName(5);
     $edit = array();
