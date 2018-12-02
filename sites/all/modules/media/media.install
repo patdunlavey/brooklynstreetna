@@ -349,7 +349,7 @@ function media_update_7002() {
     'primary key' => array('name'),
   );
 
-  db_create_table('media_type', $scheme['media_type']);
+  db_create_table('media_type', $schema['media_type']);
   drupal_load('module', 'media');
   $old_types = variable_get('media_types');
   foreach ($old_types as $type) {
