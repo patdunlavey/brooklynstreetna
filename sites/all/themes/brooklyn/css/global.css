@@ -123,3 +123,7 @@ width: 168px;
 .panel-2col .panel-col-last .inside {
 margin: 0;
 }
+
+#block-views-nodequeue-1-block .view-content {
+  width: 265px;
+}
